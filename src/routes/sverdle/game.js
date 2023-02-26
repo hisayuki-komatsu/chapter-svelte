@@ -1,4 +1,4 @@
-import { words, allowed } from './words.server';
+import { words, allowed } from './words.server'
 
 export class Game {
 	/**
@@ -7,18 +7,18 @@ export class Game {
 	 */
 	constructor(serialized = undefined) {
 		if (serialized) {
-			const [index, guesses, answers] = serialized.split('-');
+			const [index, guesses, answers] = serialized.split('-')
 
-			this.index = +index;
-			this.guesses = guesses ? guesses.split(' ') : [];
-			this.answers = answers ? answers.split(' ') : [];
+			this.index = +index
+			this.guesses = guesses ? guesses.split(' ') : []
+			this.answers = answers ? answers.split(' ') : []
 		} else {
-			this.index = Math.floor(Math.random() * words.length);
-			this.guesses = ['', '', '', '', '', ''];
-			this.answers = /** @type {string[]} */ ([]);
+			this.index = Math.floor(Math.random() * words.length)
+			this.guesses = ['', '', '', '', '', '']
+			this.answers = /** @type {string[]} */ ([])
 		}
 
-		this.answer = words[this.index];
+		this.answer = words[this.index]
 	}
 
 	/**
@@ -27,21 +27,21 @@ export class Game {
 	 * @param {string[]} letters
 	 */
 	enter(letters) {
-		const word = letters.join('');
-		const valid = allowed.has(word);
+		const word = letters.join('')
+		const valid = allowed.has(word)
 
-		if (!valid) return false;
+		if (!valid) return false
 
-		this.guesses[this.answers.length] = word;
+		this.guesses[this.answers.length] = word
 
-		const available = Array.from(this.answer);
-		const answer = Array(5).fill('_');
+		const available = Array.from(this.answer)
+		const answer = Array(5).fill('_')
 
 		// first, find exact matches
 		for (let i = 0; i < 5; i += 1) {
 			if (letters[i] === available[i]) {
-				answer[i] = 'x';
-				available[i] = ' ';
+				answer[i] = 'x'
+				available[i] = ' '
 			}
 		}
 
@@ -50,23 +50,23 @@ export class Game {
 		// match can prevent a later exact match)
 		for (let i = 0; i < 5; i += 1) {
 			if (answer[i] === '_') {
-				const index = available.indexOf(letters[i]);
+				const index = available.indexOf(letters[i])
 				if (index !== -1) {
-					answer[i] = 'c';
-					available[index] = ' ';
+					answer[i] = 'c'
+					available[index] = ' '
 				}
 			}
 		}
 
-		this.answers.push(answer.join(''));
+		this.answers.push(answer.join(''))
 
-		return true;
+		return true
 	}
 
 	/**
 	 * Serialize game state so it can be set as a cookie
 	 */
 	toString() {
-		return `${this.index}-${this.guesses.join(' ')}-${this.answers.join(' ')}`;
+		return `${this.index}-${this.guesses.join(' ')}-${this.answers.join(' ')}`
 	}
 }

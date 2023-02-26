@@ -1,9 +1,9 @@
-import { fail } from '@sveltejs/kit';
-import { Game } from './game';
+import { fail } from '@sveltejs/kit'
+import { Game } from './game'
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = ({ cookies }) => {
-	const game = new Game(cookies.get('sverdle'));
+	const game = new Game(cookies.get('sverdle'))
 
 	return {
 		/**
@@ -21,8 +21,8 @@ export const load = ({ cookies }) => {
 		 * The correct answer, revealed if the game is over
 		 */
 		answer: game.answers.length >= 6 ? game.answer : null
-	};
-};
+	}
+}
 
 /** @type {import('./$types').Actions} */
 export const actions = {
@@ -31,20 +31,20 @@ export const actions = {
 	 * is available, this will happen in the browser instead of here
 	 */
 	update: async ({ request, cookies }) => {
-		const game = new Game(cookies.get('sverdle'));
+		const game = new Game(cookies.get('sverdle'))
 
-		const data = await request.formData();
-		const key = data.get('key');
+		const data = await request.formData()
+		const key = data.get('key')
 
-		const i = game.answers.length;
+		const i = game.answers.length
 
 		if (key === 'backspace') {
-			game.guesses[i] = game.guesses[i].slice(0, -1);
+			game.guesses[i] = game.guesses[i].slice(0, -1)
 		} else {
-			game.guesses[i] += key;
+			game.guesses[i] += key
 		}
 
-		cookies.set('sverdle', game.toString());
+		cookies.set('sverdle', game.toString())
 	},
 
 	/**
@@ -52,19 +52,19 @@ export const actions = {
 	 * the server, so that people can't cheat by peeking at the JavaScript
 	 */
 	enter: async ({ request, cookies }) => {
-		const game = new Game(cookies.get('sverdle'));
+		const game = new Game(cookies.get('sverdle'))
 
-		const data = await request.formData();
-		const guess = /** @type {string[]} */ (data.getAll('guess'));
+		const data = await request.formData()
+		const guess = /** @type {string[]} */ (data.getAll('guess'))
 
 		if (!game.enter(guess)) {
-			return fail(400, { badGuess: true });
+			return fail(400, { badGuess: true })
 		}
 
-		cookies.set('sverdle', game.toString());
+		cookies.set('sverdle', game.toString())
 	},
 
 	restart: async ({ cookies }) => {
-		cookies.delete('sverdle');
+		cookies.delete('sverdle')
 	}
-};
+}
